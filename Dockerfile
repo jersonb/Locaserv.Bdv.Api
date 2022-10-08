@@ -19,4 +19,5 @@ RUN dotnet publish "Locaserv.Bdv.Api.csproj" -c Release -o /app/publish /p:UseAp
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Locaserv.Bdv.Api.dll"]
+#ENTRYPOINT ["dotnet", "Locaserv.Bdv.Api.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet Locaserv.Bdv.Api.dll

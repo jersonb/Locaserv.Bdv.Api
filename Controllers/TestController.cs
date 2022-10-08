@@ -3,7 +3,7 @@
 namespace Locaserv.Bdv.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("")]
     public class TestController : ControllerBase
     {
         [HttpGet]
