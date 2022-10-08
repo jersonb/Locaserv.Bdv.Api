@@ -37,9 +37,7 @@ namespace Locaserv.Bdv.Api.Controllers
             {
                 DateTimeOffset = DateTimeOffset.UtcNow,
                 DateTime = DateTime.UtcNow,
-                //DateOnly = DateOnly.FromDateTime(DateTime.Now),
-                //TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
-                Name = "teste"
+               Name = "teste"
             };
             await _context.Tests.AddAsync(a);
 
