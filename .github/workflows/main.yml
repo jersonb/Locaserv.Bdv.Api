@@ -2,16 +2,14 @@
 name: Locaserv BDV API deploy heroku CD
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
+    types: [closed]
     
 #set environment variables 
 env:
   HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
   APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-  ConnectionStrings_Postgres: ${{ secrets.DATABASE_CONNECTION }}
 
 jobs:
       
