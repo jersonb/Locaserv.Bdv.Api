@@ -19,7 +19,7 @@ namespace Locaserv.Bdv.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var test = await _context.Tests.FirstOrDefaultAsync();
+            var test = await _context.Tests.FirstAsync();
             var result = new
             {
                 deu_bom = "Sim!",
@@ -37,8 +37,8 @@ namespace Locaserv.Bdv.Api.Controllers
             {
                 DateTimeOffset = DateTimeOffset.UtcNow,
                 DateTime = DateTime.UtcNow,
-                DateOnly = DateOnly.FromDateTime(DateTime.Now),
-                TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+                //DateOnly = DateOnly.FromDateTime(DateTime.Now),
+                //TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
                 Name = "teste"
             };
             await _context.Tests.AddAsync(a);

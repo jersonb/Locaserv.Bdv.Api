@@ -15,7 +15,6 @@ namespace Locaserv.Bdv.Api.Models
 
         public DateTimeOffset DateTimeOffset { get; set; }
         public DateTime DateTime { get; set; }
-        public DateOnly DateOnly { get; set; }
-        public TimeOnly TimeOnly { get; set; }
+     
     }
 }
