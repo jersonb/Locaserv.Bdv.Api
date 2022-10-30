@@ -1,48 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Locaserv.Bdv.Api.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("[controller]")]
     public class TestController : ControllerBase
     {
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly LocaservContext _context;
-
-        public TestController(IWebHostEnvironment webHostEnvironment, LocaservContext context)
+        [HttpGet("ok")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetOk()
         {
-            _webHostEnvironment = webHostEnvironment;
-            _context = context;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var test = await _context.Tests.FirstAsync();
-            var result = new
-            {
-                deu_bom = "Sim!",
-                envireoment = _webHostEnvironment.EnvironmentName,
-                content = test
-            };
-
-            return Ok(result);
-        }
-
-        [HttpGet("vai")]
-        public async Task<IActionResult> Post()
-        {
-            var a = new Models.Test
-            {
-                DateTimeOffset = DateTimeOffset.UtcNow,
-                DateTime = DateTime.UtcNow,
-               Name = "teste"
-            };
-            await _context.Tests.AddAsync(a);
-
-            await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpGet("accepted")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public IActionResult GetAccepted()
+        {
+            return Accepted();
+        }
+
+        [HttpGet("not-found")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetNotFound()
+        {
+            return NotFound();
+        }
+
+        [HttpGet("unauthorized")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public IActionResult GetUnauthorized()
+        {
+            return Unauthorized();
+        }
+
+        [HttpGet("bad-request")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetBadRequest()
+        {
+            return BadRequest();
+        }
+
+        [HttpGet("error")]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult GetInternalServerError()
+        {
+            throw new Exception();
         }
     }
 }
