@@ -19,5 +19,6 @@ namespace Locaserv.Bdv.Api
         }
 
         public DbSet<Test> Tests { get; set; }
+        public DbSet<Car> Cars { get; set; }
     }
 }

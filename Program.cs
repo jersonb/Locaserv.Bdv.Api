@@ -12,7 +12,6 @@ services.AddDbContext<LocaservContext>(options =>
 
 services.AddScoped<ILocaservContext, LocaservContext>();
 
-
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddRouting(options => options.LowercaseUrls = true);
@@ -20,12 +19,12 @@ services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// migrate any database changes on startup (includes initial db creation)
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dataContext = scope.ServiceProvider.GetRequiredService<LocaservContext>();
-//    dataContext.Database.Migrate();
-//}
+//migrate any database changes on startup (includes initial db creation)
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<LocaservContext>();
+    dataContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
