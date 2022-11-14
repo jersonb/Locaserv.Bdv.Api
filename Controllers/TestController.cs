@@ -20,6 +20,13 @@ namespace Locaserv.Bdv.Api.Controllers
             return Accepted();
         }
 
+        [HttpGet("created")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public IActionResult GetCreated()
+        {
+            return Created("[api]/[controller]/{uuid}", Guid.NewGuid());
+        }
+
         [HttpGet("not-found")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetNotFound()
