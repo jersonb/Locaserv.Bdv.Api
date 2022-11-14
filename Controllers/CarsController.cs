@@ -31,7 +31,7 @@ namespace Locaserv.Bdv.Api.Controllers
         {
             var result = await context.Cars
                 .Where(car => car.IsActive && car.Uuid == uuid)
-                .Select(car =>(DetailCarViewModel)car)
+                .Select(car => (DetailCarViewModel)car)
                 .SingleAsync(cancellationToken);
             return Ok(result);
         }
@@ -39,8 +39,16 @@ namespace Locaserv.Bdv.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CreateCarViewModel createCar, CancellationToken cancellationToken)
         {
-
             var car = (Car)createCar;
+
+            var arredyExists = await context.Cars.AnyAsync(c => 
+               c.Uuid == car.Uuid 
+            || c.InternalCode == car.InternalCode 
+            || c.LicensePlate == car.LicensePlate, cancellationToken);
+
+            if (arredyExists)
+                throw new Exception();
+
             await context.Cars.AddAsync(car, cancellationToken);
             var rowsAfected = await context.SaveChangesAsync(cancellationToken);
 
@@ -57,6 +65,7 @@ namespace Locaserv.Bdv.Api.Controllers
                 throw new Exception();
 
             var model = await context.Cars.SingleAsync(x => x.Uuid == uuid, cancellationToken);
+
             model.UpdatedAtAt = DateTime.UtcNow;
             model.LicensePlate = car.LicensePlate;
             model.InternalCode = car.InternalCode;
