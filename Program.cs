@@ -1,4 +1,3 @@
-using Locaserv.Bdv.Api;
 using Locaserv.Bdv.Api.Data;
 using Microsoft.EntityFrameworkCore;
 

@@ -3,14 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Locaserv.Bdv.Api.Models
 {
-    [Table("car")]
-    public class Car
+    public abstract class EntityBase
     {
-        public Car()
+        protected EntityBase()
         {
             Uuid = Guid.NewGuid();
             IsActive = true;
-            CreatedAt = DateTime.UtcNow;
+            CreatedAt = DateTimeOffset.UtcNow;
         }
 
         [Key]
@@ -19,14 +18,6 @@ namespace Locaserv.Bdv.Api.Models
 
         [Column("find_id")]
         public Guid Uuid { get; set; }
-
-        [MaxLength(10)]
-        [Column("internal_code")]
-        public string InternalCode { get; set; } = string.Empty;
-
-        [MaxLength(10)]
-        [Column("license_plate")]
-        public string LicensePlate { get; set; } = string.Empty;
 
         [Column("is_active")]
         public bool IsActive { get; set; }

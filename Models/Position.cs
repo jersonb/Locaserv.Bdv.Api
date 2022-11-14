@@ -1,6 +1,6 @@
 namespace Locaserv.Bdv.Api.Models
 {
-    public struct Position
+    public readonly struct Position
     {
         public Position(decimal latitude, decimal longitude)
         {
@@ -9,9 +9,9 @@ namespace Locaserv.Bdv.Api.Models
         }
 
         public static explicit operator Position((decimal latitude, decimal longitude) position)
-        => new(position.latitude,position.longitude);
+        => new(position.latitude, position.longitude);
 
         public decimal Latitude { get; }
-        public decimal Longitude { get;  }
+        public decimal Longitude { get; }
     }
 }

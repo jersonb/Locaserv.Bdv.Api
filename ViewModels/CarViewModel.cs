@@ -4,7 +4,7 @@ namespace Locaserv.Bdv.Api.ViewModels;
 
 public record DetailCarViewModel
 {
-    private DetailCarViewModel(Car car)
+    private DetailCarViewModel(Vehicle car)
     {
         Uuid = car.Uuid;
         LicensePlate = car.LicensePlate;
@@ -15,13 +15,13 @@ public record DetailCarViewModel
     public string LicensePlate { get; }
     public string InternalCode { get; }
 
-    public static explicit operator DetailCarViewModel(Car car)
+    public static explicit operator DetailCarViewModel(Vehicle car)
         => new(car);
 }
 
 public record CreateCarViewModel(string InternalCode, string LicensePlate)
 {
-    public static explicit operator Car(CreateCarViewModel car)
+    public static explicit operator Vehicle(CreateCarViewModel car)
         => new()
         {
             InternalCode = car.InternalCode,
@@ -30,7 +30,7 @@ public record CreateCarViewModel(string InternalCode, string LicensePlate)
 }
 public record UpdateCarViewModel(Guid Uuid, string InternalCode, string LicensePlate)
 {
-    public static explicit operator Car(UpdateCarViewModel car)
+    public static explicit operator Vehicle(UpdateCarViewModel car)
         => new()
         {
             Uuid = car.Uuid,
