@@ -8,11 +8,11 @@ namespace Locaserv.Bdv.Api.Models
     {
         [MaxLength(100)]
         [Column("name")]
-        public string Name { get; init; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
         [MaxLength(30)]
         [Column("code")]
-        public string Code { get; init; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
 
         public ICollection<ConductorVehicle> ConductorsVehicles { get; set; } = new HashSet<ConductorVehicle>();
     }
