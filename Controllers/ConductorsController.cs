@@ -18,6 +18,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DetailConductorViewModel>))]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var result = await context.Conductors
@@ -29,6 +30,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpGet("uuid:guid")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DetailConductorViewModel))]
         public async Task<IActionResult> GetById(Guid uuid, CancellationToken cancellationToken)
         {
             var result = await context.Conductors
@@ -40,6 +42,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Post(CreateConductorViewMode createConductor, CancellationToken cancellationToken)
         {
             var conductor = (Conductor)createConductor;
@@ -63,6 +66,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpPut("{uuid:guid}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Put(UpdateConductorViewModel conductor, Guid uuid, CancellationToken cancellationToken)
         {
             if (conductor.Uuid != uuid)
@@ -93,6 +97,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpDelete("{uuid:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Delete(DeleteConductorViewMode conductor, Guid uuid, CancellationToken cancellationToken)
         {
             if (conductor.Uuid != uuid)

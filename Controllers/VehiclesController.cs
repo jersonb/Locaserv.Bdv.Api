@@ -18,6 +18,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DetailVehicleViewModel>))]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
             var result = await context.Vehicles
@@ -29,6 +30,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpGet("{uuid:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DetailVehicleViewModel))]
         public async Task<IActionResult> GetById(Guid uuid, CancellationToken cancellationToken)
         {
             var result = await context.Vehicles
@@ -40,6 +42,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Post(CreateVehicleViewModel createVehicle, CancellationToken cancellationToken)
         {
             var vehicle = (Vehicle)createVehicle;
@@ -63,6 +66,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpPut("{uuid:guid}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Put(UpdateVehicleViewModel vehicle, Guid uuid, CancellationToken cancellationToken)
         {
             if (vehicle.Uuid != uuid)
@@ -93,6 +97,7 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpDelete("{uuid:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Delete(DeleteVehicleViewModel vehicle, Guid uuid, CancellationToken cancellationToken)
         {
             if (vehicle.Uuid != uuid)
