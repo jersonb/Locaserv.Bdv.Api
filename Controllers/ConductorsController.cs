@@ -1,5 +1,6 @@
 ﻿using Locaserv.Bdv.Api.Data;
 using Locaserv.Bdv.Api.Models;
+using Locaserv.Bdv.Api.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,21 +20,40 @@ namespace Locaserv.Bdv.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var conductors = await context.Conductors.AsNoTracking().ToListAsync(cancellationToken);
-            return Ok(conductors);
+            var result = await context.Conductors
+               .AsNoTracking()
+               .Where(conductor => conductor.IsActive)
+               .Select(conductor => (DetailConductorViewModel)conductor)
+               .ToListAsync(cancellationToken);
+            return Ok(result);
         }
 
         [HttpGet("uuid:guid")]
         public async Task<IActionResult> GetById(Guid uuid, CancellationToken cancellationToken)
         {
-            var conductor = await context.Conductors.AsNoTracking().SingleOrDefaultAsync(c => c.Uuid == uuid, cancellationToken);
-            return Ok(conductor);
+            var result = await context.Conductors
+               .AsNoTracking()
+               .Where(conductor => conductor.IsActive && conductor.Uuid == uuid)
+               .Select(conductor => (DetailConductorViewModel)conductor)
+               .SingleAsync(cancellationToken);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Conductor conductor, CancellationToken cancellationToken)
+        public async Task<IActionResult> Post(CreateConductorViewMode createConductor, CancellationToken cancellationToken)
         {
-            context.Conductors.Add(conductor);
+            var conductor = (Conductor)createConductor;
+
+            var alreadyExists = await context.Conductors
+                .AsNoTracking()
+                .AnyAsync(c => c.Uuid == conductor.Uuid
+                                    || c.Name == conductor.Name
+                                    || c.Code == conductor.Code, cancellationToken);
+
+            if (alreadyExists)
+                throw new Exception();
+
+            await context.Conductors.AddAsync(conductor, cancellationToken);
             var rowsAfected = await context.SaveChangesAsync(cancellationToken);
 
             if (rowsAfected == 0)
@@ -43,9 +63,26 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpPut("{uuid:guid}")]
-        public async Task<IActionResult> Put(Conductor conductor, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put(UpdateConductorViewModel conductor, Guid uuid, CancellationToken cancellationToken)
         {
-            context.Conductors.Update(conductor);
+            if (conductor.Uuid != uuid)
+                throw new Exception();
+
+            var alreadyExists = await context.Conductors
+                .AsNoTracking()
+                .AnyAsync(c => c.Uuid != conductor.Uuid &&
+                                 (c.Name == conductor.Name || c.Code == conductor.Code), cancellationToken);
+
+            if (alreadyExists)
+                throw new Exception();
+
+            var model = await context.Conductors.SingleAsync(c => c.Uuid == conductor.Uuid, cancellationToken);
+
+            model.UpdatedAtAt = DateTimeOffset.UtcNow;
+            model.Code = conductor.Code;
+            model.Name = conductor.Name;
+
+            context.Conductors.Update(model);
 
             var rowAfected = await context.SaveChangesAsync(cancellationToken);
 
@@ -56,13 +93,15 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpDelete("{uuid:guid}")]
-        public async Task<IActionResult> Delete(Guid uuid, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(DeleteConductorViewMode conductor, Guid uuid, CancellationToken cancellationToken)
         {
-            var conductor = await context.Conductors.SingleOrDefaultAsync(c => c.Uuid == uuid, cancellationToken);
+            if (conductor.Uuid != uuid)
+                throw new Exception();
 
-            conductor.Delete();
+            var model = await context.Conductors.SingleAsync(c => c.Uuid == uuid, cancellationToken);
+            model.Delete();
 
-            context.Conductors.Update(conductor);
+            context.Conductors.Update(model);
             var rowAfected = await context.SaveChangesAsync(cancellationToken);
 
             if (rowAfected == 0)

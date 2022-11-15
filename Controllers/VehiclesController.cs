@@ -22,8 +22,8 @@ namespace Locaserv.Bdv.Api.Controllers
         {
             var result = await context.Vehicles
                 .AsNoTracking()
-                .Where(car => car.IsActive)
-                .Select(car => (DetailCarViewModel)car)
+                .Where(vehicle => vehicle.IsActive)
+                .Select(vehicle => (DetailVehicleViewModel)vehicle)
                 .ToListAsync(cancellationToken);
             return Ok(result);
         }
@@ -33,47 +33,57 @@ namespace Locaserv.Bdv.Api.Controllers
         {
             var result = await context.Vehicles
                 .AsNoTracking()
-                .Where(car => car.IsActive && car.Uuid == uuid)
-                .Select(car => (DetailCarViewModel)car)
+                .Where(vehicle => vehicle.IsActive && vehicle.Uuid == uuid)
+                .Select(vehicle => (DetailVehicleViewModel)vehicle)
                 .SingleAsync(cancellationToken);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(CreateCarViewModel createCar, CancellationToken cancellationToken)
+        public async Task<IActionResult> Post(CreateVehicleViewModel createVehicle, CancellationToken cancellationToken)
         {
-            var car = (Vehicle)createCar;
+            var vehicle = (Vehicle)createVehicle;
 
-            var arredyExists = await context.Vehicles.AnyAsync(c =>
-               c.Uuid == car.Uuid
-            || c.InternalCode == car.InternalCode
-            || c.LicensePlate == car.LicensePlate, cancellationToken);
+            var alredyExists = await context.Vehicles
+                .AsNoTracking()
+                .AnyAsync(v => v.Uuid == vehicle.Uuid
+                                  || v.InternalCode == vehicle.InternalCode
+                                  || v.LicensePlate == vehicle.LicensePlate, cancellationToken);
 
-            if (arredyExists)
+            if (alredyExists)
                 throw new Exception();
 
-            await context.Vehicles.AddAsync(car, cancellationToken);
+            await context.Vehicles.AddAsync(vehicle, cancellationToken);
             var rowsAfected = await context.SaveChangesAsync(cancellationToken);
 
             if (rowsAfected == 0)
                 throw new Exception();
 
-            return CreatedAtAction(nameof(GetById), new { uuid = car.Uuid }, null);
+            return CreatedAtAction(nameof(GetById), new { uuid = vehicle.Uuid }, null);
         }
 
         [HttpPut("{uuid:guid}")]
-        public async Task<IActionResult> Put(UpdateCarViewModel car, Guid uuid, CancellationToken cancellationToken)
+        public async Task<IActionResult> Put(UpdateVehicleViewModel vehicle, Guid uuid, CancellationToken cancellationToken)
         {
-            if (car.Uuid != uuid)
+            if (vehicle.Uuid != uuid)
                 throw new Exception();
 
-            var model = await context.Vehicles.SingleAsync(x => x.Uuid == uuid, cancellationToken);
+            var alreadyExists = await context.Vehicles
+                .AsNoTracking()
+                .AnyAsync(v => v.Uuid != vehicle.Uuid &&
+                               (v.LicensePlate == vehicle.LicensePlate || v.InternalCode == vehicle.InternalCode), cancellationToken);
 
-            model.UpdatedAtAt = DateTime.UtcNow;
-            model.LicensePlate = car.LicensePlate;
-            model.InternalCode = car.InternalCode;
+            if (alreadyExists)
+                throw new Exception();
+
+            var model = await context.Vehicles.SingleAsync(v => v.Uuid == uuid, cancellationToken);
+
+            model.UpdatedAtAt = DateTimeOffset.UtcNow;
+            model.LicensePlate = vehicle.LicensePlate;
+            model.InternalCode = vehicle.InternalCode;
 
             context.Vehicles.Update(model);
+
             var rowAfected = await context.SaveChangesAsync(cancellationToken);
 
             if (rowAfected == 0)
@@ -83,12 +93,12 @@ namespace Locaserv.Bdv.Api.Controllers
         }
 
         [HttpDelete("{uuid:guid}")]
-        public async Task<IActionResult> Delete(DeleteCarViewModel car, Guid uuid, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(DeleteVehicleViewModel vehicle, Guid uuid, CancellationToken cancellationToken)
         {
-            if (car.Uuid != uuid)
+            if (vehicle.Uuid != uuid)
                 throw new Exception();
 
-            var model = await context.Vehicles.SingleAsync(x => x.Uuid == uuid, cancellationToken);
+            var model = await context.Vehicles.SingleAsync(v => v.Uuid == uuid, cancellationToken);
             model.Delete();
 
             context.Vehicles.Update(model);
