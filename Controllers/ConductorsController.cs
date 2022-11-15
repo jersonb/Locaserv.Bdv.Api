@@ -29,7 +29,7 @@ namespace Locaserv.Bdv.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("uuid:guid")]
+        [HttpGet("{uuid:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DetailConductorViewModel))]
         public async Task<IActionResult> GetById(Guid uuid, CancellationToken cancellationToken)
         {
